@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "./;user";
+
+service User{
+  rpc RegisterUser (RegisterUserReq) returns (RegisterUserResp) {}
+  rpc Login (LoginReq) returns (LoginResp) {}
+  rpc Cancellation (CancellationReq) returns (CancellationResp) {}
+  rpc UploadImg (UploadImgReq) returns (UploadImgResp) {}
+  rpc GetUserList (GetUserListReq) returns (GetUserListResp) {}
+  rpc UserInfo (UserInfoReq) returns (UserInfoResp) {}
+}
+
+enum UserSex {
+  Male = 0;
+  Female = 1;
+}
+
+message RegisterUserReq {
+  string UserName = 1;
+  string Password = 2;
+  UserSex Sex = 4;
+}
+
+message RegisterUserResp{
+  string UserName = 1;
+  uint32 ID = 3;
+}
+
+message LoginReq{
+  string UserName = 1;
+  string Password = 2;
+}
+
+message LoginResp{
+  string UserName = 1;
+  uint32 ID = 3;
+  string Token = 4;
+}
+
+message CancellationReq{
+  string Token = 1;
+}
+
+message CancellationResp{
+  string message = 1;
+}
+
+enum UserListSort{
+  ASC = 0;
+  Desc = 1;
+}
+
+message GetUserListReq{
+  uint32 Page = 1;
+  uint32 Size = 2;
+  UserListSort Sort = 3;
+}
+
+message UserInfo{
+  string UserName = 1;
+  uint32 ID = 3;
+  uint32 W = 4;
+  uint32 A = 5;
+  uint32 G = 6;
+  uint32 T = 7;
+
+}
+
+message GetUserListResp{
+  repeated UserInfo UserInfo = 1;
+}
+
+message UserInfoReq{
+  uint32 ID = 1;
+}
+
+message UserInfoResp{
+  string UserName = 1;
+  uint32 ID = 3;
+}
+
+enum UploadImgType{
+  PNG = 0;
+  JPG = 1;
+}
+
+message UploadImgReq {
+  UploadImgType FileType = 1;
+  bytes img = 2;
+}
+
+enum UploadStatusCode {
+  Unknown = 0;
+  Ok = 1;
+  Failed = 2;
+}
+
+message UploadImgResp {
+  string Message = 1;
+  UploadStatusCode Code = 2;
+}
