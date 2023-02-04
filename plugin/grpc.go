@@ -30,42 +30,41 @@ type Grpc struct {
 	Method   string
 	Metadata []RpcMetadata
 	Timeout  float32
-
-	body io.Reader
+	Body     io.Reader
 }
 
 type InvokeGrpc struct {
-	g          *Grpc
+	G          *Grpc
 	descSource grpcurl.DescriptorSource
 	cc         *grpc.ClientConn
 	ctx        context.Context
 }
 
 func NewInvokeGrpc(g *Grpc) *InvokeGrpc {
-	return &InvokeGrpc{g: g}
+	return &InvokeGrpc{G: g}
 }
 
 func (i *InvokeGrpc) getResource() (err error) {
 	resourceRWMutex.RLock()
-	res := resourceMap[i.g.Host]
+	res := resourceMap[i.G.Host]
 	resourceRWMutex.RUnlock()
 	if res == nil {
 		resourceRWMutex.Lock()
 		defer resourceRWMutex.Unlock()
-		res = resourceMap[i.g.Host]
+		res = resourceMap[i.G.Host]
 		if res == nil {
 			err = i.getClient()
 			if err != nil {
 				return
 			}
-			resourceMap[i.g.Host] = i.descSource
-			ccMap[i.g.Host] = i.cc
-			ctxMap[i.g.Host] = i.ctx
+			resourceMap[i.G.Host] = i.descSource
+			ccMap[i.G.Host] = i.cc
+			ctxMap[i.G.Host] = i.ctx
 		}
 	}
-	i.descSource = resourceMap[i.g.Host]
-	i.cc = ccMap[i.g.Host]
-	i.ctx = ctxMap[i.g.Host]
+	i.descSource = resourceMap[i.G.Host]
+	i.cc = ccMap[i.G.Host]
+	i.ctx = ctxMap[i.G.Host]
 	return
 }
 
@@ -89,7 +88,7 @@ func (i *InvokeGrpc) getClient() (err error) {
 
 	network := "tcp"
 	var creds credentials.TransportCredentials
-	i.cc, err = dial(dialCtx, network, i.g.Host, creds, true, opts...)
+	i.cc, err = dial(dialCtx, network, i.G.Host, creds, true, opts...)
 	if err != nil {
 		return
 	}
@@ -113,7 +112,7 @@ func (i *InvokeGrpc) InvokeFunction() (results *RpcResult, err error) {
 		return nil, err
 	}
 	header := http.Header{}
-	configs, err := ComputeSvcConfigs([]string{i.g.Host}, []string{i.g.Method})
+	configs, err := ComputeSvcConfigs([]string{i.G.Host}, []string{i.G.Method})
 	if err != nil {
 		return
 	}
@@ -122,20 +121,20 @@ func (i *InvokeGrpc) InvokeFunction() (results *RpcResult, err error) {
 		return
 	}
 	for _, md := range descs {
-		if md.GetFullyQualifiedName() == i.g.Method {
+		if md.GetFullyQualifiedName() == i.G.Method {
 			i.descSource, err = grpcurl.DescriptorSourceFromFileDescriptors(md.GetFile())
 
 			var input rpcInput
 			var js []byte
-			js, err = io.ReadAll(i.g.body)
+			js, err = io.ReadAll(i.G.Body)
 			if err != nil {
 				return
 			}
 			input.Data = append(input.Data, js)
-			input.Metadata = i.g.Metadata
-			input.TimeoutSeconds = i.g.Timeout
+			input.Metadata = i.G.Metadata
+			input.TimeoutSeconds = i.G.Timeout
 
-			results, err = invokeRPC(i.ctx, i.g.Method, i.cc, i.descSource, header, input, &InvokeOptions{})
+			results, err = invokeRPC(i.ctx, i.G.Method, i.cc, i.descSource, header, input, &InvokeOptions{})
 
 			return
 		}

@@ -1,21 +1,21 @@
-package plugin
+package main
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/test-instructor/grpc-plugin/demo"
+	"github.com/test-instructor/grpc-plugin/plugin"
 	"math/rand"
 	"strconv"
 	"strings"
-	"testing"
 	"time"
 )
 
-func TestGrpcConnect(t *testing.T) {
+func main() {
 	go demo.StartSvc()
 	defer demo.StopSvc()
 	rand.Seed(time.Now().UnixNano())
-	var g = &Grpc{}
+	var g = &plugin.Grpc{}
 	req := make(map[string]interface{})
 	req["UserName"] = strconv.Itoa(rand.Intn(1000000))
 	req["Password"] = "1112"
@@ -23,9 +23,9 @@ func TestGrpcConnect(t *testing.T) {
 	g.Host = "127.0.0.1:40061"
 	g.Method = "user.User.RegisterUser"
 	g.Timeout = 1.0
-	g.Metadata = []RpcMetadata{{"User", "test"}}
+	g.Metadata = []plugin.RpcMetadata{{"User", "test"}}
 	g.Body = strings.NewReader(string(reqStr))
-	ig := NewInvokeGrpc(g)
+	ig := plugin.NewInvokeGrpc(g)
 	res, err := ig.InvokeFunction()
 	fmt.Println("===================")
 	if err == nil && res.Responses != nil {
@@ -58,41 +58,4 @@ func TestGrpcConnect(t *testing.T) {
 		fmt.Println(err2)
 	}
 	fmt.Println("===================")
-}
-
-func TestServer(t *testing.T) {
-	go demo.StartSvc()
-	defer demo.StopSvc()
-	var g = &Grpc{}
-	g.Host = "127.0.0.1:40061"
-	g.Timeout = 1.0
-
-	ig := NewInvokeGrpc(g)
-	err := ig.getResource()
-	if err != nil {
-		return
-	}
-	fmt.Println(ig)
-
-	// 获取服务列表
-	svc, _ := ig.getSvs()
-	var serverName, method string
-	fmt.Println(svc)
-
-	//服务列表不为空时取第一个服务
-	if svc != nil && len(svc) > 0 {
-		serverName = svc[0]
-	}
-	//获取method列表并取第一个methon
-	methods, _ := ig.getMethod(serverName)
-
-	if methods != nil && len(methods) > 0 {
-		method = methods[0]
-	}
-	//config, _ := ComputeSvcConfig(ig.g.Host, method)
-	//获取req内容
-	results, _ := ig.getReq(serverName, method)
-	fmt.Println(results.MessageTypes)
-	resultsJson, _ := json.Marshal(results)
-	fmt.Println(string(resultsJson))
 }
