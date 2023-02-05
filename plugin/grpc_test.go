@@ -18,7 +18,7 @@ func TestGrpcConnect(t *testing.T) {
 	var g = &Grpc{}
 	req := make(map[string]interface{})
 	req["UserName"] = strconv.Itoa(rand.Intn(1000000))
-	req["Password"] = "1112"
+	req["P"] = "1112"
 	reqStr, err := json.Marshal(req)
 	g.Host = "127.0.0.1:40061"
 	g.Method = "user.User.RegisterUser"
@@ -39,7 +39,7 @@ func TestGrpcConnect(t *testing.T) {
 
 	fmt.Println("===================")
 	g.Method = "user.User.Login"
-	req["Password"] = "111112"
+	req["P"] = "111112"
 	reqStr, err = json.Marshal(req)
 	ig.G.Body = strings.NewReader(string(reqStr))
 	ig.G.Method = "user.User.Login"

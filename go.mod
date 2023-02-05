@@ -7,9 +7,7 @@ require (
 	github.com/fullstorydev/grpcurl v1.8.7
 	github.com/golang/protobuf v1.5.2
 	github.com/jhump/protoreflect v1.14.1
-	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/robfig/cron/v3 v3.0.1
-	golang.org/x/crypto v0.5.0
 	google.golang.org/grpc v1.52.3
 	google.golang.org/protobuf v1.28.1
 )
@@ -26,7 +24,6 @@ require (
 	golang.org/x/net v0.5.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783 // indirect
 	golang.org/x/sys v0.4.0 // indirect
-	golang.org/x/term v0.4.0 // indirect
 	golang.org/x/text v0.6.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20221118155620-16455021b5e6 // indirect

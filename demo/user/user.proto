@@ -20,7 +20,7 @@ enum UserSex {
 
 message RegisterUserReq {
   string UserName = 1;
-  string Password = 2;
+  string P = 2;
   UserSex Sex = 4;
 }
 
@@ -31,7 +31,7 @@ message RegisterUserResp{
 
 message LoginReq{
   string UserName = 1;
-  string Password = 2;
+  string P = 2;
 }
 
 message LoginResp{

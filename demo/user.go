@@ -143,7 +143,7 @@ func (u *UserServerGRPC) Login(ctx context.Context, req *user.LoginReq) (*user.L
 	defer userMutex.Unlock()
 	if len(userName) > 0 {
 		_, ok := UserDB[UserDBName[userName]]
-		if ok && req.Password == UserDB[UserDBName[userName]].Password {
+		if ok && req.P == UserDB[UserDBName[userName]].P {
 			var resp user.LoginResp
 			UserDB[UserDBName[userName]].Token = RandAllString(32)
 			resp.UserName = UserDB[UserDBName[userName]].UserName
@@ -171,7 +171,7 @@ func (u *UserServerGRPC) RegisterUser(ctx context.Context, req *user.RegisterUse
 		us := &User{}
 		us.ID = uid
 		us.UserName = req.UserName
-		us.Password = req.Password
+		us.P = req.P
 		us.Sex = req.Sex
 		us.RegisterTime = time.Now()
 		userMutex.Lock()

@@ -10,7 +10,7 @@ var UserID uint32
 type User struct {
 	ID           uint32
 	UserName     string
-	Password     string
+	P            string
 	NickName     string
 	Sex          user.UserSex
 	RegisterTime time.Time
