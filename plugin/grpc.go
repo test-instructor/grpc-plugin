@@ -44,7 +44,7 @@ func NewInvokeGrpc(g *Grpc) *InvokeGrpc {
 	return &InvokeGrpc{G: g}
 }
 
-func (i *InvokeGrpc) getResource() (err error) {
+func (i *InvokeGrpc) GetResource() (err error) {
 	resourceRWMutex.RLock()
 	res := resourceMap[i.G.Host]
 	resourceRWMutex.RUnlock()
@@ -107,7 +107,7 @@ func (i *InvokeGrpc) getClient() (err error) {
 }
 
 func (i *InvokeGrpc) InvokeFunction() (results *RpcResult, err error) {
-	err = i.getResource()
+	err = i.GetResource()
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +166,7 @@ func ComputeSvcConfigs(services, methods []string) (map[string]*svcConfig, error
 	return configs, nil
 }
 
-func (i *InvokeGrpc) getSvs() (svc []string, err error) {
+func (i *InvokeGrpc) GetSvs() (svc []string, err error) {
 	allServices, err := i.descSource.ListServices()
 	if err != nil {
 		return
@@ -180,7 +180,7 @@ func (i *InvokeGrpc) getSvs() (svc []string, err error) {
 	return
 }
 
-func (i *InvokeGrpc) getMethod(serverName string) (method []string, err error) {
+func (i *InvokeGrpc) GetMethod(serverName string) (method []string, err error) {
 
 	d, err := i.descSource.FindSymbol(serverName)
 	if err != nil {
@@ -198,7 +198,7 @@ func (i *InvokeGrpc) getMethod(serverName string) (method []string, err error) {
 	return
 }
 
-func (i *InvokeGrpc) getReq(svc, method string) (results *schema, err error) {
+func (i *InvokeGrpc) GetReq(svc, method string) (results *schema, err error) {
 	d, err := i.descSource.FindSymbol(svc)
 	if err != nil {
 		return nil, err

@@ -68,14 +68,14 @@ func TestServer(t *testing.T) {
 	g.Timeout = 1.0
 
 	ig := NewInvokeGrpc(g)
-	err := ig.getResource()
+	err := ig.GetResource()
 	if err != nil {
 		return
 	}
 	fmt.Println(ig)
 
 	// 获取服务列表
-	svc, _ := ig.getSvs()
+	svc, _ := ig.GetSvs()
 	var serverName, method string
 	fmt.Println(svc)
 
@@ -84,14 +84,14 @@ func TestServer(t *testing.T) {
 		serverName = svc[0]
 	}
 	//获取method列表并取第一个methon
-	methods, _ := ig.getMethod(serverName)
+	methods, _ := ig.GetMethod(serverName)
 
 	if methods != nil && len(methods) > 0 {
 		method = methods[0]
 	}
 	//config, _ := ComputeSvcConfig(ig.g.Host, method)
 	//获取req内容
-	results, _ := ig.getReq(serverName, method)
+	results, _ := ig.GetReq(serverName, method)
 	fmt.Println(results.MessageTypes)
 	resultsJson, _ := json.Marshal(results)
 	fmt.Println(string(resultsJson))
