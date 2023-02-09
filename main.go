@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	go demo.StartSvc()
+	demo.StartSvc()
 	defer demo.StopSvc()
 	rand.Seed(time.Now().UnixNano())
 	var g = &plugin.Grpc{}

@@ -14,6 +14,7 @@ import (
 	reflectpb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
 	"io"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 )
@@ -216,6 +217,17 @@ func (i *InvokeGrpc) GetReq(svc, method string) (results *schema, err error) {
 			}
 
 			results = r
+
+			tmpl := grpcurl.MakeTemplate(md.GetInputType())
+			_, formatter, err := grpcurl.RequestParserAndFormatterFor(grpcurl.Format("json"), i.descSource, true, false, nil)
+			if err != nil {
+				return results, err
+			}
+
+			str, _ := formatter(tmpl)
+			str = strings.Replace(str, " ", "", -1)
+			str = strings.Replace(str, "\n", "", -1)
+			results.Body = str
 			break
 		}
 	}

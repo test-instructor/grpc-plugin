@@ -115,6 +115,7 @@ type schema struct {
 	RequestStream bool                    `json:"requestStream"`
 	MessageTypes  map[string][]fieldDef   `json:"messageTypes"`
 	EnumTypes     map[string][]enumValDef `json:"enumTypes"`
+	Body          string                  `json:"body"`
 }
 
 type fieldDef struct {
