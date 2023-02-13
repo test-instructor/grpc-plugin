@@ -171,7 +171,7 @@ func (u *UserServerGRPC) RegisterUser(ctx context.Context, req *user.RegisterUse
 		us := &User{}
 		us.ID = uid
 		us.UserName = req.UserName
-		us.P = req.P
+		us.P = req.Pwd
 		us.Sex = req.Sex
 		us.RegisterTime = time.Now()
 		userMutex.Lock()

@@ -18,16 +18,63 @@ enum UserSex {
   Female = 1;
 }
 
+enum week{
+    Sunday = 0;
+    Monday =1;
+    Tuesday = 2;
+    Wednesday=3;
+    Thursday=4;
+    Friday=5;
+    Saturday=6;
+}
+
 message RegisterUserReq {
   string UserName = 1;
-  string P = 2;
+  string Pwd = 2;
   UserSex Sex = 4;
+  Info Info = 5;
+  Class class = 6;
+  week week = 7;
+  Msg msg = 8;
+  Article article=9;
+  Student student=10;
 }
+
+
+message Student{
+  int64              id    = 1; //id
+  string             name  = 2; //学生姓名
+  map<string, int32> score = 3;  //学科 分数的map
+}
+
+message Article {
+  string url = 1;
+  string title = 2;
+  repeated string tags = 3;
+}
+
+message Msg {
+  repeated int32 arrays = 1;
+}
+
+message Info {
+  string Data = 1;
+  string Name = 2;
+}
+
+message Class {
+  string id = 1;
+  string name = 2;
+}
+
 
 message RegisterUserResp{
   string UserName = 1;
   uint32 ID = 3;
 }
+
+
+
 
 message LoginReq{
   string UserName = 1;
