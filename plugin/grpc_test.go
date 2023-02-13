@@ -96,3 +96,46 @@ func TestServer(t *testing.T) {
 	resultsJson, _ := json.Marshal(results)
 	fmt.Println(string(resultsJson))
 }
+
+func TestServerReset(t *testing.T) {
+	//go demo.StartSvc()
+	//defer demo.StopSvc()
+	var g = &Grpc{}
+	g.Host = "127.0.0.1:40061"
+	g.Timeout = 1.0
+
+	ig := NewInvokeGrpc(g)
+	err := ig.GetResource()
+	if err != nil {
+		return
+	}
+	fmt.Println(ig)
+
+	// 获取服务列表
+	svc, _ := ig.GetSvs()
+	var serverName, method string
+	fmt.Println(svc)
+
+	//服务列表不为空时取第一个服务
+	if svc != nil && len(svc) > 0 {
+		serverName = svc[0]
+	}
+	method = "RegisterUser"
+
+	//config, _ := ComputeSvcConfig(ig.g.Host, method)
+	//获取req内容
+	results, _ := ig.GetReq(serverName, method)
+	fmt.Println(results.MessageTypes)
+	resultsJson, _ := json.Marshal(results)
+	fmt.Println(string(resultsJson))
+
+	err = ig.Reset()
+	if err != nil {
+		return
+	}
+	results2, _ := ig.GetReq(serverName, method)
+	fmt.Println(results2.MessageTypes)
+	resultsJson2, _ := json.Marshal(results2)
+	fmt.Println(string(resultsJson2))
+
+}

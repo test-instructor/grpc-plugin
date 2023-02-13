@@ -23,6 +23,7 @@ var (
 	resourceMap     = make(map[string]grpcurl.DescriptorSource)
 	ccMap           = make(map[string]*grpc.ClientConn)
 	ctxMap          = make(map[string]context.Context)
+	refClientMap    = make(map[string]*grpcreflect.Client)
 	resourceRWMutex sync.RWMutex
 )
 
@@ -39,6 +40,7 @@ type InvokeGrpc struct {
 	descSource grpcurl.DescriptorSource
 	cc         *grpc.ClientConn
 	ctx        context.Context
+	refClient  *grpcreflect.Client
 }
 
 func NewInvokeGrpc(g *Grpc) *InvokeGrpc {
@@ -61,11 +63,13 @@ func (i *InvokeGrpc) GetResource() (err error) {
 			resourceMap[i.G.Host] = i.descSource
 			ccMap[i.G.Host] = i.cc
 			ctxMap[i.G.Host] = i.ctx
+			refClientMap[i.G.Host] = i.refClient
 		}
 	}
 	i.descSource = resourceMap[i.G.Host]
 	i.cc = ccMap[i.G.Host]
 	i.ctx = ctxMap[i.G.Host]
+	i.refClient = refClientMap[i.G.Host]
 	return
 }
 
@@ -102,6 +106,7 @@ func (i *InvokeGrpc) getClient() (err error) {
 	refCtx := metadata.NewOutgoingContext(ctx, md)
 	refClient = grpcreflect.NewClient(refCtx, reflectpb.NewServerReflectionClient(i.cc))
 	reflSource := grpcurl.DescriptorSourceFromServer(ctx, refClient)
+	i.refClient = refClient
 	i.descSource = compositeSource{reflection: reflSource}
 	i.ctx = ctx
 	return
@@ -236,4 +241,18 @@ func (i *InvokeGrpc) GetReq(svc, method string) (results *schema, err error) {
 	}
 
 	return
+}
+
+func (i *InvokeGrpc) Reset() (err error) {
+	resourceRWMutex.Lock()
+	defer resourceRWMutex.Unlock()
+	err = i.getClient()
+	if err != nil {
+		return
+	}
+	resourceMap[i.G.Host] = i.descSource
+	ccMap[i.G.Host] = i.cc
+	ctxMap[i.G.Host] = i.ctx
+	refClientMap[i.G.Host] = i.refClient
+	return err
 }
